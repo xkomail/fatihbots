@@ -81,7 +81,7 @@ client.unload = command => {
 
 client.on('message', msg => {
   if (msg.content.toLowerCase() === 'sa') {
-    msg.reply('Aleyküm Selam Buyur Geç Otur Çaylar Bizden');
+    msg.reply('Aleyküm Selam');
   }
 });
 
@@ -283,6 +283,18 @@ if (message.content.toLowerCase() === prefix + "ördek") {
     message.channel.send(embed)
 
 }});
+
+client.on("guildMemberAdd", async member => {
+    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
+    const channel = member.guild.channels.find("name", "sayaç")
+    channel.send(`**${member.user.tag}** Katırldı 😎 ${sayac[member.guild.id].sayi} olmamıza son ${sayac[member.guild.id].sayi - member.guild.members.size} üye kaldı!`)
+})
+
+client.on("guildMemberRemove", async member => {
+    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
+    const channel = member.guild.channels.find("name", "sayaç")
+    channel.send(`**${member.user.tag}** Ayrıldı 🙁 ${sayac[member.guild.id].sayi} olmamıza son ${sayac[member.guild.id].sayi - member.guild.members.size} üye kaldı!`)
+})
 
 client.on("message", msg => {
         const reklam = ["discordapp", "discord.gg", "discord.tk", "discordbots.org", "https://discordapp.com", "https://discord.gg", "http://discord.gg", "htpp:/discordapp.com", "https://discordbots.org", "www.google.com", "youtube", "bc.vc", "link.tl", ];
