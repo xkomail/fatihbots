@@ -1,1 +1,1 @@
-worker node bot.js goto start
+worker node bot.js sleep 1 goto start
