@@ -132,55 +132,6 @@ if (message.content.toLowerCase() === prefix + "zekam") {
 }
 });
 
-//Kullanıcı sunucuya katıldığında ayarlanan kanala mesaj gönderelim.
-client.on("guildMemberAdd", async member => {
-  let giriscikis = JSON.parse(fs.readFileSync("./giriscikis.json", "utf8"));  
-
-  let embed = new Discord.RichEmbed()
-    .setTitle('Giriş Çıkış Sistemi')
-    .setDescription(`📥 | ${member} Sunucuya katıldı.`)
-    .setColor("GREEN")
-    .setTimestamp()
-    .setFooter("Truva Bot", client.user.avatarURL);
-
-  if (!giriscikis[member.guild.id]) {
-    return;
-  }
-
-  try {
-    let giriscikiskanalID = giriscikis[member.guild.id].giriscikis;
-    let giriscikiskanali = client.guilds.get(member.guild.id).channels.get(giriscikiskanalID);
-    giriscikiskanali.send(embed);
-  } catch (e) { // eğer hata olursa bu hatayı öğrenmek için hatayı konsola gönderelim.
-    return console.log(e)
-  }
-
-});
-
-//Kullanıcı sunucudan ayrıldığında ayarlanan kanala mesaj gönderelim.
-client.on("guildMemberRemove", async member => {
-  let giriscikis = JSON.parse(fs.readFileSync("./giriscikis.json", "utf8"));
-
-  let embed = new Discord.RichEmbed()
-    .setTitle('Giriş Çıkış Sistemi')
-    .setDescription(`📤 | ${member} Sunucudan Ayrıldı.`)
-    .setColor("RED")
-    .setTimestamp()
-    .setFooter("Truva Bot", client.user.avatarURL);
-
-  if (!giriscikis[member.guild.id]) {
-    return;
-  }
-
-  try {
-    let giriscikiskanalID = giriscikis[member.guild.id].giriscikis;
-    let welcomechannel = client.guilds.get(member.guild.id).channels.get(giriscikiskanalID);
-    welcomechannel.send(embed);
-  } catch (e) { // eğer hata olursa bu hatayı öğrenmek için hatayı konsola gönderelim.
-    return console.log(e)
-  }
-});
-
 client.on('message', message => {
 if (message.content.toLowerCase() === prefix + "espriyap") {
     var sans = ["Geçen gün geçmiş günlerimi aradım ama meşguldü.", "Yağmur yağmış kar peynir", "Dünya dönermiş ay da köfte…", "Bu erikson başka erik yok.", "Yıkanan Ton a ne denir Washington", "Hadi oyun oynayalım. Vazgeçtim oymadan oynayalım!", "Geçen gün kamyonu sürdüm Leonardo da Vinci.", "Doğumdan sonra çok kilo aldım. Doğduğumda 2 kiloydum şimdi 62.", "Adam 7 gün boyunca nezle olmuş. Sıkılmış bugün de Petek le olayım demiş.", "Yarasa yararlı bir hayvandır. Yararlı bir hayvan olmasaydı yaramasa derlerdi.", " Benim neden kardeşim yok baba  Seni görünce ikincisine cesaret edemedik.", "Tatlı yiyip, tatlı konuşuluyorsa bundan sonra mantı yiyip mantıklı konuşacağız.", "Babamı sahura kaldırmayı unuttuk anneme masada ne eksik diyorum tuzluk mu diyor.", "+Okeyde kıza elin nasıl dedim. Ojeli dedi. Ben Şoka girdim. O Migrosa.", "Canım sıkkın kanka sonra gel"];
@@ -190,15 +141,6 @@ if (message.content.toLowerCase() === prefix + "espriyap") {
     .setColor("RANDOM")
     return message.channel.sendEmbed(embed);
 }
-});
-
-client.on("guildMemberAdd", member => {
-    let otorol = JSON.parse(fs.readFileSync("./otorol.json", "utf8"));
-  
-    var role = otorol[member.guild.id].role;
-  const rol = member.guild.roles.find('name', role);
-    if (!rol)
-    member.addRole(role);
 });
 
 client.on('message', message => {
@@ -253,24 +195,6 @@ client.on("message", message => {
         return message.channel.sendEmbed(embed)
     }
 });
-
-client.on("message", async message => {
-    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
-    if(sayac[message.guild.id]) {
-        if(sayac[message.guild.id].sayi <= message.guild.members.size) {
-            const embed = new Discord.RichEmbed()
-                .setDescription(`Tebrikler ${message.guild.name}! Başarıyla ${sayac[message.guild.id].sayi} kullanıcıya ulaştık! Sayaç sıfırlandı!`)
-                .setColor(ayarlar.renk)
-                .setTimestamp()
-            message.channel.send({embed})
-            delete sayac[message.guild.id].sayi;
-            delete sayac[message.guild.id];
-            fs.writeFile("./ayarlar/sayac.json", JSON.stringify(sayac), (err) => {
-                console.log(err)
-            })
-        }
-    }
-})
 
 client.on('message', async message => {
     if (message.content.toLowerCase() === prefix + 'döviz') {
@@ -356,18 +280,6 @@ if (message.content.toLowerCase() === prefix + "ördek") {
     message.channel.send(embed)
 
 }});
-
-client.on("guildMemberAdd", async member => {
-    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
-    const channel = member.guild.channels.find("name", "sayaç")
-    channel.send(`**${member.user.tag}** Katırldı 😎 ${sayac[member.guild.id].sayi} olmamıza son ${sayac[member.guild.id].sayi - member.guild.members.size} üye kaldı!`)
-})
-
-client.on("guildMemberRemove", async member => {
-    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
-    const channel = member.guild.channels.find("name", "sayaç")
-    channel.send(`**${member.user.tag}** Ayrıldı 🙁 ${sayac[member.guild.id].sayi} olmamıza son ${sayac[member.guild.id].sayi - member.guild.members.size} üye kaldı!`)
-})
 
 client.on("message", msg => {
         const reklam = ["discordapp", "discord.gg", "discord.tk", "discordbots.org", "https://discordapp.com", "https://discord.gg", "http://discord.gg", "htpp:/discordapp.com", "https://discordbots.org", "www.google.com", "youtube", "bc.vc", "link.tl", ];
