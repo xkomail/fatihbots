@@ -1,1 +1,1 @@
-worker node bot.js sleep 1 goto start
+npm i discord.js
