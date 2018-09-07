@@ -81,7 +81,7 @@ client.unload = command => {
 
 client.on('message', msg => {
   if (msg.content.toLowerCase() === 'sa') {
-    msg.reply('Aleyküm Selam');
+    msg.reply('Aleyküm Selam Buyur Geç Otur Çaylar Bizden');
   }
 });
 
@@ -132,6 +132,54 @@ if (message.content.toLowerCase() === prefix + "zekam") {
 }
 });
 
+//Kullanıcı sunucuya katıldığında ayarlanan kanala mesaj gönderelim.
+client.on("guildMemberAdd", async member => {
+  let giriscikis = JSON.parse(fs.readFileSync("./giriscikis.json", "utf8"));  
+
+  let embed = new Discord.RichEmbed()
+    .setTitle('Giriş Çıkış Sistemi')
+    .setDescription(`📥 | ${member} Sunucuya katıldı.`)
+    .setColor("GREEN")
+    .setTimestamp()
+    .setFooter("Truva Bot", client.user.avatarURL);
+
+  if (!giriscikis[member.guild.id]) {
+    return;
+  }
+
+  try {
+    let giriscikiskanalID = giriscikis[member.guild.id].giriscikis;
+    let giriscikiskanali = client.guilds.get(member.guild.id).channels.get(giriscikiskanalID);
+    giriscikiskanali.send(embed);
+  } catch (e) { // eğer hata olursa bu hatayı öğrenmek için hatayı konsola gönderelim.
+    return console.log(e)
+  }
+
+});
+
+//Kullanıcı sunucudan ayrıldığında ayarlanan kanala mesaj gönderelim.
+client.on("guildMemberRemove", async member => {
+  let giriscikis = JSON.parse(fs.readFileSync("./giriscikis.json", "utf8"));
+
+  let embed = new Discord.RichEmbed()
+    .setTitle('Giriş Çıkış Sistemi')
+    .setDescription(`📤 | ${member} Sunucudan Ayrıldı.`)
+    .setColor("RED")
+    .setTimestamp()
+    .setFooter("Truva Bot", client.user.avatarURL);
+
+  if (!giriscikis[member.guild.id]) {
+    return;
+  }
+
+  try {
+    let giriscikiskanalID = giriscikis[member.guild.id].giriscikis;
+    let welcomechannel = client.guilds.get(member.guild.id).channels.get(giriscikiskanalID);
+    welcomechannel.send(embed);
+  } catch (e) { // eğer hata olursa bu hatayı öğrenmek için hatayı konsola gönderelim.
+    return console.log(e)
+  }
+});
 
 client.on('message', message => {
 if (message.content.toLowerCase() === prefix + "espriyap") {
@@ -144,6 +192,14 @@ if (message.content.toLowerCase() === prefix + "espriyap") {
 }
 });
 
+client.on("guildMemberAdd", member => {
+    let otorol = JSON.parse(fs.readFileSync("./otorol.json", "utf8"));
+  
+    var role = otorol[member.guild.id].role;
+  const rol = member.guild.roles.find('name', role);
+    if (!rol)
+    member.addRole(role);
+});
 
 client.on('message', message => {
 if (message.content.toLowerCase() === prefix + "söz") {
@@ -188,7 +244,7 @@ client.on("message", message => {
     
     if (message.content.toLowerCase() === prefix + "botbilgi") {
         const embed = new Discord.RichEmbed()
-            .addField("Bot Sahibi", `<@311234210264514562>`, true)
+            .addField("Bot Sahibi", `<@373904597703589888>`, true)
             .addField("Version", "2", true)
             .addField("Toplam Sunucu Sayısı", client.guilds.size, true)
             .addField("Toplam Kullanıcı Sayısı", client.users.size, true)
@@ -198,6 +254,23 @@ client.on("message", message => {
     }
 });
 
+client.on("message", async message => {
+    let sayac = JSON.parse(fs.readFileSync("./ayarlar/sayac.json", "utf8"));
+    if(sayac[message.guild.id]) {
+        if(sayac[message.guild.id].sayi <= message.guild.members.size) {
+            const embed = new Discord.RichEmbed()
+                .setDescription(`Tebrikler ${message.guild.name}! Başarıyla ${sayac[message.guild.id].sayi} kullanıcıya ulaştık! Sayaç sıfırlandı!`)
+                .setColor(ayarlar.renk)
+                .setTimestamp()
+            message.channel.send({embed})
+            delete sayac[message.guild.id].sayi;
+            delete sayac[message.guild.id];
+            fs.writeFile("./ayarlar/sayac.json", JSON.stringify(sayac), (err) => {
+                console.log(err)
+            })
+        }
+    }
+})
 
 client.on('message', async message => {
     if (message.content.toLowerCase() === prefix + 'döviz') {
@@ -220,7 +293,7 @@ request('https://www.doviz.com/api/v1/currencies/EUR/latest', function (error, r
 client.on("message", message => {
     if (message.content.toLowerCase() === prefix + "yardım") {
         const embed = new Discord.RichEmbed()
-.addField("Tüm Komutlar",`.anakomutlar = Botun Anakomutlarını Gösterir \n.yetkili = Yetkili Kommutlarını Gösterir \n.eğlence = Bot un Eğlence Komutlarını Gösterir \n @`)
+.addField("Tüm Komutlar",`!!anakomutlar = Botun Anakomutlarını Gösterir \n!!yetkili = Yetkili Kommutlarını Gösterir \n!!eğlence = Bot un Eğlence Komutlarını Gösterir \n @`)
             .setColor("RANDOM")
         return message.channel.sendEmbed(embed)
     }
@@ -229,7 +302,7 @@ client.on("message", message => {
 client.on("message", message => {
     if (message.content.toLowerCase() === prefix + "eğlence") {
         const embed = new Discord.RichEmbed()
-.addField("**Eğlence ve Kullanıcı Komutları:**", `.isamusa = Kafa Dansı Yaparsınız \n.döviz = Dolar Ve Euroyu Gösterir \n.avatarım = Avatarınınızı Gösterir \n.herkesebendençay = Herkese Çay Alırsınız \n.koş = Koşarsınız.\n.çayiç = Çay İçersiniz \n.çekiç = İstediğiniz Kişiye Çekiç Atarsınız \n.çayaşekerat = Çaya Şeker Atarsınız. \n.tokat = İstediğiniz Kişiye tokat Atarsınız \n.yaz = Bota İstediğiniz Şeyi Yazdırırsınız \n.sunucuresmi = BOT Sunucunun Resmini Atar \n.kullanıcıbilgim = Sizin Hakkınızda Bilgi Verir \n.çekiliş = sunucunuzda Bir Çekiliş Yapar \n.espriyap = Espri Yapar \n.zekam = Zekanızı Gösterir \n.sigara = Sigara İcersiniz \n.balıktut = Balık Tutarsınız \n.yazıtura = Yazı mı Turamı :D \n.ördek = Ördek Fotorafları Atar \n.söz = Havalı Sözler Atar \n.düello <@kullanıcı> = İstediğiniz bir kişi ile düello atarsınız  \n.topla / çıkar /çarp / böl / [sayı] [sayı] = Matematik İşlemlerini Yapar \n.havadurumu [şeyir] = Sectiginiz Şeyrin Hava Durmunu Gösterir`)
+.addField("**Eğlence ve Kullanıcı Komutları:**", `!!döviz = Dolar Ve Euroyu Gösterir \n!!avatarım = Avatarınınızı Gösterir \n!!herkesebendençay = Herkese Çay Alırsınız \n!!koş = Koşarsınız.\n!!çayiç = Çay İçersiniz \n!!çekiç = İstediğiniz Kişiye Çekiç Atarsınız \n!!çayaşekerat = Çaya Şeker Atarsınız. \n!!tokat = İstediğiniz Kişiye tokat Atarsınız \n!!yaz = Bota İstediğiniz Şeyi Yazdırırsınız \n!!sunucuresmi = BOT Sunucunun Resmini Atar \n!!kullanıcıbilgim = Sizin Hakkınızda Bilgi Verir \n!!çekiliş = sunucunuzda Bir Çekiliş Yapar \n!!espriyap = Espri Yapar \n!!zekam = Zekanızı Gösterir \n!!sigara = Sigara İcersiniz \n!!balıktut = Balık Tutarsınız \n!!yazıtura = Yazı mı Turamı :D \n!!ördek = Ördek Fotorafları Atar \n!!söz = Havalı Sözler Atar \n!!düello <@kullanıcı> = İstediğiniz bir kişi ile düello atarsınız  \n!!topla / çıkar /çarp / böl / [sayı] [sayı] = Matematik İşlemlerini Yapar \n!!havadurumu [şeyir] = Sectiginiz Şeyrin Hava Durmunu Gösterir`)
             .setColor("RANDOM")
         return message.channel.sendEmbed(embed)
     }
@@ -238,7 +311,7 @@ client.on("message", message => {
 client.on("message", message => {
     if (message.content.toLowerCase() === prefix + "yetkili") {
         const embed = new Discord.RichEmbed()
-.addField("**Yetkili Komutları:**", `.kilit {süre} = Kanalı bir Sürelıne Kilitler \n.sil = Belirtilen Sayı Kadar Mesaj Siler \n.sustur = İstediginiz kisişiyi susturursunuz \n.at = İstediginiz kişiyi Atar Atar \n.ban = Istedıgınız Kısıyı Banlar \n.uyar = Istedıgınız Kısıyı Uyarır \n.oylama = Oylama başlatır  \n.geçicisustur [Kullanıcı] [Süre] = İstediğiniz kişiyi Gecici olarak Yazı yazmasını Engeller \n.sayaç [sayı] = Belırlenen sayıya kac kişi kaldıgını gösterir Ama İlk sayaç adında kanal acın \n.otorol [rol etiketlemeyin] = Otorol Başlar .otorol uye etıketlemeyın calısmaz Bide Bot un Yetkisi Yukarda Olsun \n.giriş-çıkış-ayarla #kanal adı = Giriş Cıkış Mesajları atar`)
+.addField("**Yetkili Komutları:**", `!!kilit {süre} = Kanalı bir Sürelıne Kilitler \n!!sil = Belirtilen Sayı Kadar Mesaj Siler \n!!sustur = İstediginiz kisişiyi susturursunuz \n!!at = İstediginiz kişiyi Atar Atar \n!!ban = Istedıgınız Kısıyı Banlar \n!!uyar = Istedıgınız Kısıyı Uyarır \n!!oylama = Oylama başlatır  \n!!geçicisustur [Kullanıcı] [Süre] = İstediğiniz kişiyi Gecici olarak Yazı yazmasını Engeller \n!!sayaç [sayı] = Belırlenen sayıya kac kişi kaldıgını gösterir Ama İlk sayaç adında kanal acın \n!!otorol [rol etiketlemeyin] = Otorol Başlar !!otorol uye etıketlemeyın calısmaz Bide Bot un Yetkisi Yukarda Olsun \n!!giriş-çıkış-ayarla #kanal adı = Giriş Cıkış Mesajları atar`)
             .setColor("RANDOM")
         return message.channel.sendEmbed(embed)
     }
@@ -247,7 +320,7 @@ client.on("message", message => {
 client.on("message", message => {
     if (message.content.toLowerCase() === prefix + "anakomutlar") {
         const embed = new Discord.RichEmbed()
-.addField("**Ana Komutlar:**", `.sunucubilgi = Sunucunun Bilgilerini Gösterir \n.botbilgi = Botun Bilgilerini Gösterir \n.ping = Botun Pingini Gösterir \n.destek = Botun Yapımcısından Yardım İstemek İcin Ayrıca tavsiye de verebılırsınız \n.davet = Botun Sunucunuza Almak İcin Botun Davet Linkini Atar`)
+.addField("**Ana Komutlar:**", `!!sunucubilgi = Sunucunun Bilgilerini Gösterir \n!!botbilgi = Botun Bilgilerini Gösterir \n!!ping = Botun Pingini Gösterir \n!!destek = Botun Yapımcısından Yardım İstemek İcin Ayrıca tavsiye de verebılırsınız \n!!davet = Botun Sunucunuza Almak İcin Botun Davet Linkini Atar`)
             .setColor("RANDOM")
         return message.channel.sendEmbed(embed)
     }
@@ -297,7 +370,7 @@ client.on("guildMemberRemove", async member => {
 })
 
 client.on("message", msg => {
-        const reklam = ["discordapp", "discord.gg", "discord.tk", "discordbots.org", "https://discordapp.com", "https://discord.gg", "http://discord.gg", "htpp:/discordapp.com", "https://discordbots.org", "www.google.com", "youtube", "bc.vc", "link.tl", ];
+        const reklam = ["discordapp", "discord.gg", "discord.tk", "discordbots.org", "https://discordapp.com", "https://discord.gg", "http://discord.gg", "htpp:/discordapp.com", "https://discordbots.org"];
         if (reklam.some(word => msg.content.includes(word))) {
           try {
              if (!msg.member.hasPermission("BAN_MEMBERS")) {
