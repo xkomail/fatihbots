@@ -1,4 +1,4 @@
-﻿const Discord = require('discord.js');
+const Discord = require('discord.js');
 const superagent = require("superagent");
 const client = new Discord.Client();
 const ayarlar = require('./ayarlar.json');
@@ -81,7 +81,7 @@ client.unload = command => {
 
 client.on('message', msg => {
   if (msg.content.toLowerCase() === 'sa') {
-    msg.reply('Aleyküm Selam');
+    msg.reply('Aleyküm Selam Buyur Geç Otur Çaylar Bizden');
   }
 });
 
@@ -132,6 +132,7 @@ if (message.content.toLowerCase() === prefix + "zekam") {
 }
 });
 
+
 client.on('message', message => {
 if (message.content.toLowerCase() === prefix + "espriyap") {
     var sans = ["Geçen gün geçmiş günlerimi aradım ama meşguldü.", "Yağmur yağmış kar peynir", "Dünya dönermiş ay da köfte…", "Bu erikson başka erik yok.", "Yıkanan Ton a ne denir Washington", "Hadi oyun oynayalım. Vazgeçtim oymadan oynayalım!", "Geçen gün kamyonu sürdüm Leonardo da Vinci.", "Doğumdan sonra çok kilo aldım. Doğduğumda 2 kiloydum şimdi 62.", "Adam 7 gün boyunca nezle olmuş. Sıkılmış bugün de Petek le olayım demiş.", "Yarasa yararlı bir hayvandır. Yararlı bir hayvan olmasaydı yaramasa derlerdi.", " Benim neden kardeşim yok baba  Seni görünce ikincisine cesaret edemedik.", "Tatlı yiyip, tatlı konuşuluyorsa bundan sonra mantı yiyip mantıklı konuşacağız.", "Babamı sahura kaldırmayı unuttuk anneme masada ne eksik diyorum tuzluk mu diyor.", "+Okeyde kıza elin nasıl dedim. Ojeli dedi. Ben Şoka girdim. O Migrosa.", "Canım sıkkın kanka sonra gel"];
@@ -142,6 +143,7 @@ if (message.content.toLowerCase() === prefix + "espriyap") {
     return message.channel.sendEmbed(embed);
 }
 });
+
 
 client.on('message', message => {
 if (message.content.toLowerCase() === prefix + "söz") {
@@ -195,6 +197,7 @@ client.on("message", message => {
         return message.channel.sendEmbed(embed)
     }
 });
+
 
 client.on('message', async message => {
     if (message.content.toLowerCase() === prefix + 'döviz') {
@@ -319,4 +322,4 @@ client.on('error', e => {
   console.log(chalk.bgRed(e.replace(regToken, 'that was redacted')));
 });
 
-client.login(process.env.BOT_TOKEN);
+client.login(ayarlar.token);
