@@ -1,1 +1,1 @@
-npm i discord.js
+sudo apt-get install nodejs
